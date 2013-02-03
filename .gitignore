@@ -37,3 +37,5 @@
 /Boxia/Debug/*.log
 
 /Debug/*.exe
+
+/*.opensdf
