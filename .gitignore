@@ -26,3 +26,14 @@
 
 /Debug/*.lastbuildstate
 /*.sdf
+
+*.obj
+
+*.tlog
+*.idb
+*.pdb
+*.lastbuildstate
+
+/Boxia/Debug/*.log
+
+/Debug/*.exe

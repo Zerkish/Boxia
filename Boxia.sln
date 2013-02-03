@@ -8,8 +8,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Boxia", "Boxia\Boxia.vcxpro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibZerkish", "F:\C++\LibZerkish\LibZerkish\LibZerkish.vcxproj", "{AE5E74E4-3C07-424E-9F44-4B089920CE58}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "First3D", "F:\C++\DirectXLessons\First3D\First3D.vcxproj", "{AF7E9514-8C4A-46E3-803D-7A78FD5F7E41}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -24,10 +22,6 @@ Global
 		{AE5E74E4-3C07-424E-9F44-4B089920CE58}.Debug|Win32.Build.0 = Debug|Win32
 		{AE5E74E4-3C07-424E-9F44-4B089920CE58}.Release|Win32.ActiveCfg = Release|Win32
 		{AE5E74E4-3C07-424E-9F44-4B089920CE58}.Release|Win32.Build.0 = Release|Win32
-		{AF7E9514-8C4A-46E3-803D-7A78FD5F7E41}.Debug|Win32.ActiveCfg = Debug|Win32
-		{AF7E9514-8C4A-46E3-803D-7A78FD5F7E41}.Debug|Win32.Build.0 = Debug|Win32
-		{AF7E9514-8C4A-46E3-803D-7A78FD5F7E41}.Release|Win32.ActiveCfg = Release|Win32
-		{AF7E9514-8C4A-46E3-803D-7A78FD5F7E41}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
