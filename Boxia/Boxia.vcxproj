@@ -39,8 +39,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>F:\C++\LibZerkish\Output\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>F:\C++\LibZerkish\Output\Lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\GitHub\LibZerkish\Output\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\GitHub\LibZerkish\Output\Lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
