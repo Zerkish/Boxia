@@ -34,8 +34,8 @@ private:
   D3DXVECTOR3 worldPos;
   void CreateAndFillBuffers();
   
-  D3DXVECTOR4 GetBlockColor(const Block& block);
-  void CreateBlock(float f, float y, float z, D3DXVECTOR4& color, int hideFlags = 0);
+  const Material& GetBlockMaterial(const Block& block);
+  void CreateBlock(float f, float y, float z, const Material& blockMat, int hideFlags = 0);
   
   enum HideFlags : int
   {
@@ -49,13 +49,7 @@ private:
 
   Block*** blocks;
   ZGraphics* graphics;
-  //ID3D10Device* device;
-  //ID3D10Buffer* vBuffer;
-  //ID3D10Buffer* iBuffer;
-
   ZMesh* mesh;
-  
-
 };
 
 #endif

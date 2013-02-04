@@ -37,6 +37,7 @@ private:
   //Chunk* chunk;
   vector<Chunk*> chunks;
   ZGraphics* graphics;
+  D3DXVECTOR4 lightPos;
 };
 
 #endif

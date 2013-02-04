@@ -16,6 +16,7 @@ Application::Application(HINSTANCE hInst, int width, int height)
 {
   camXZRot = 0;
   camYRot = 0;
+  lightPos = D3DXVECTOR4(0, 5, 0, 0);
 }
 
 
@@ -55,6 +56,7 @@ bool Application::Initialize()
     MessageBox(NULL, (char*)compErrors->GetBufferPointer(),
       "Shader Compilation Error", MB_OK | MB_ICONERROR);
     compErrors->Release();
+    exit(0);
   }
   graphics = new ZGraphics(graphicsDevice, effect);
   basicTechnique = effect->GetTechniqueByName("Renderer");
@@ -121,17 +123,6 @@ void Application::Update(double delta)
     camXZRot = -PI;
   }
 
-  //if(ZKeyboard::IsKeyDown(Keys::Space))
-  //{
-  //  chunks.push_back(new Chunk(graphics));
-  //  chunks[chunkCount]->Init();
-  //  chunks[chunkCount]->SetWorldPosition(
-  //    ((chunkCount % 8) - 4) * 16,
-  //    0,
-  //    ((chunkCount / 8) - 4) * 16);
-  //  chunkCount++;
-  //}
-
   if(ZKeyboard::IsKeyDown(Keys::W))
   {
     camDist -= 0.1f * delta;
@@ -141,6 +132,33 @@ void Application::Update(double delta)
     camDist += 0.1f * delta;
   }
   
+  if(ZKeyboard::IsKeyDown(Keys::Numpad8))
+  {
+    lightPos.z += 0.01f * delta;
+  }
+  if(ZKeyboard::IsKeyDown(Keys::Numpad5))
+  {
+    lightPos.z -= 0.01f * delta;
+  }
+
+  if(ZKeyboard::IsKeyDown(Keys::Numpad4))
+  {
+    lightPos.x -= 0.01f * delta;
+  }
+  if(ZKeyboard::IsKeyDown(Keys::Numpad6))
+  {
+    lightPos.x += 0.01f * delta;
+  }
+
+  if(ZKeyboard::IsKeyDown(Keys::Subtract))
+  {
+    lightPos.y += 0.01f * delta;
+  }
+
+  if(ZKeyboard::IsKeyDown(Keys::Add))
+  {
+    lightPos.y -= 0.01f * delta;
+  }
 
 
   D3DXVECTOR3 camTarget(0, 0, 1);
@@ -193,11 +211,16 @@ void Application::Draw()
 
   basicTechnique->GetDesc(&basicTechDesc);
 
-  //ID3D10EffectVectorVariable* lightDir = effect->GetVariableByName("diffuseDir")->AsVector();
+  ID3D10EffectVectorVariable* camPos = effect->GetVariableByName("cameraPosition")->AsVector();
 
   //D3DXVECTOR3 invDiff = -camera->Position();
   //D3DXVec3Normalize(&invDiff, &invDiff);
   //lightDir->SetFloatVector((float*)&invDiff);
+
+  camPos->SetFloatVector((float*)&camera->Position());
+
+  camPos = effect->GetVariableByName("pointLightPos")->AsVector();
+  camPos->SetFloatVector((float*)&lightPos);
 
   for(Chunk* chunk : chunks)
   {

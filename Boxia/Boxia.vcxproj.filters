@@ -41,12 +41,15 @@
     <ClCompile Include="Block.cpp">
       <Filter>World</Filter>
     </ClCompile>
+    <ClCompile Include="WorldManager.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="ChunkManager.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexFormats.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GameManager.h">
@@ -60,6 +63,15 @@
     </ClInclude>
     <ClInclude Include="DebugCamera.h">
       <Filter>Engine\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldManager.h">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="ChunkManager.h">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainGenerator.h">
+      <Filter>World</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

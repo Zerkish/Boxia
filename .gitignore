@@ -39,3 +39,7 @@
 /Debug/*.exe
 
 /*.opensdf
+
+/Boxia/Release/*.log
+
+/Boxia/Release/*.unsuccessfulbuild

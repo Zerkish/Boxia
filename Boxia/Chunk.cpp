@@ -1,13 +1,14 @@
 #include "Chunk.h"
 #include <d3d10.h>
 #include "Block.h"
+#include <VertexFormats.h>
 #include <cassert>
 
 ID3D10InputLayout* Chunk::chunkILayout = NULL;
 
 void Chunk::CreateChunkILayout(ZGraphics* g)
 {
-  D3D10_INPUT_ELEMENT_DESC desc[3];
+  D3D10_INPUT_ELEMENT_DESC desc[4];
   desc[0].AlignedByteOffset = 0;
   desc[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
   desc[0].InputSlot = 0;
@@ -17,22 +18,31 @@ void Chunk::CreateChunkILayout(ZGraphics* g)
   desc[0].SemanticName = "POSITION";
 
   desc[1].AlignedByteOffset = 12;
-  desc[1].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+  desc[1].Format = DXGI_FORMAT_R32G32B32_FLOAT;
   desc[1].InputSlot = 0;
   desc[1].InputSlotClass = D3D10_INPUT_PER_VERTEX_DATA;
   desc[1].InstanceDataStepRate = 0;
   desc[1].SemanticIndex = 0;
-  desc[1].SemanticName = "COLOR";
+  desc[1].SemanticName = "NORMAL";
 
-  desc[2].AlignedByteOffset = 28;
-  desc[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+  desc[2].AlignedByteOffset = 24;
+  desc[2].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
   desc[2].InputSlot = 0;
   desc[2].InputSlotClass = D3D10_INPUT_PER_VERTEX_DATA;
   desc[2].InstanceDataStepRate = 0;
   desc[2].SemanticIndex = 0;
-  desc[2].SemanticName = "NORMAL";
+  desc[2].SemanticName = "COLOR";
 
-  Chunk::chunkILayout = g->CreateInputLayot(desc, 3);
+  desc[3].AlignedByteOffset = 40;
+  desc[3].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+  desc[3].InputSlot = 0;
+  desc[3].InputSlotClass = D3D10_INPUT_PER_VERTEX_DATA;
+  desc[3].InstanceDataStepRate = 0;
+  desc[3].SemanticIndex = 1;
+  desc[3].SemanticName = "COLOR";
+
+
+  Chunk::chunkILayout = g->CreateInputLayot(desc, 4);
 }
 
 Chunk::Chunk(ZGraphics* graphics)
@@ -59,7 +69,7 @@ bool Chunk::Init()
   {
     for(int z = 0; z < gkChunkSize; ++z)
     {
-      map[x][z] = (rand() % 8) * (float)((rand() % 100) / 100.0f);
+      map[x][z] = (rand() % 5) * (float)((rand() % 100) / 100.0f);
     }
   }
 
@@ -118,7 +128,7 @@ void Chunk::CreateAndFillBuffers()
     {
       for(int y = 0; y < gkChunkSize; ++y)
       {
-        D3DXVECTOR4 blockCol = GetBlockColor(blocks[x][z][y]);
+        Material blockMat = GetBlockMaterial(blocks[x][z][y]);
         
         if(blocks[x][z][y].Visible() == false)
         {
@@ -143,7 +153,7 @@ void Chunk::CreateAndFillBuffers()
         if(y < gkChunkSize - 1 && blocks[x][z][y + 1].Visible())
           hideFlags |= HideFlags::Top;
 
-        CreateBlock(worldPos.x + aX, worldPos.y + aY, worldPos.z + aZ, blockCol, hideFlags);
+        CreateBlock(worldPos.x + aX, worldPos.y + aY, worldPos.z + aZ, blockMat, hideFlags);
       }
     }
   }
@@ -151,7 +161,7 @@ void Chunk::CreateAndFillBuffers()
 
 }
 
-void Chunk::CreateBlock(float x, float y, float z, D3DXVECTOR4& color, int hideFlags)
+void Chunk::CreateBlock(float x, float y, float z, const Material& blockMat, int hideFlags)
 {
   D3DXVECTOR3 p0(x - gkBlockSize / 2, y + gkBlockSize / 2, z - gkBlockSize / 2);
   D3DXVECTOR3 p1(x + gkBlockSize / 2, y + gkBlockSize / 2, z - gkBlockSize / 2);
@@ -169,10 +179,10 @@ void Chunk::CreateBlock(float x, float y, float z, D3DXVECTOR4& color, int hideF
   if(!(hideFlags & HideFlags::Front))
   {
     normal = D3DXVECTOR3(0, 0, -1.0f);
-    v0 = mesh->AddVertex(p0, color, normal);
-    v1 = mesh->AddVertex(p1, color, normal);
-    v2 = mesh->AddVertex(p2, color, normal);
-    v3 = mesh->AddVertex(p3, color, normal);
+    v0 = mesh->AddVertex(p0, blockMat, normal);
+    v1 = mesh->AddVertex(p1, blockMat, normal);
+    v2 = mesh->AddVertex(p2, blockMat, normal);
+    v3 = mesh->AddVertex(p3, blockMat, normal);
 
     mesh->CreateTriangle(v0, v1, v2);
     mesh->CreateTriangle(v2, v3, v0);
@@ -181,10 +191,10 @@ void Chunk::CreateBlock(float x, float y, float z, D3DXVECTOR4& color, int hideF
   if(!(hideFlags & HideFlags::Back))
   {
     normal = D3DXVECTOR3(0, 0, 1.0f);
-    v0 = mesh->AddVertex(p7, color, normal);
-    v1 = mesh->AddVertex(p6, color, normal);
-    v2 = mesh->AddVertex(p5, color, normal);
-    v3 = mesh->AddVertex(p4, color, normal);
+    v0 = mesh->AddVertex(p7, blockMat, normal);
+    v1 = mesh->AddVertex(p6, blockMat, normal);
+    v2 = mesh->AddVertex(p5, blockMat, normal);
+    v3 = mesh->AddVertex(p4, blockMat, normal);
 
     mesh->CreateTriangle(v0, v1, v2);
     mesh->CreateTriangle(v2, v3, v0);
@@ -194,10 +204,10 @@ void Chunk::CreateBlock(float x, float y, float z, D3DXVECTOR4& color, int hideF
   if(!(hideFlags & HideFlags::Top))
   {
     normal = D3DXVECTOR3(0, 1.0f, 0);
-    v0 = mesh->AddVertex(p4, color, normal);
-    v1 = mesh->AddVertex(p5, color, normal);
-    v2 = mesh->AddVertex(p1, color, normal);
-    v3 = mesh->AddVertex(p0, color, normal);
+    v0 = mesh->AddVertex(p4, blockMat, normal);
+    v1 = mesh->AddVertex(p5, blockMat, normal);
+    v2 = mesh->AddVertex(p1, blockMat, normal);
+    v3 = mesh->AddVertex(p0, blockMat, normal);
 
     mesh->CreateTriangle(v0, v1, v2);
     mesh->CreateTriangle(v2, v3, v0);
@@ -207,10 +217,10 @@ void Chunk::CreateBlock(float x, float y, float z, D3DXVECTOR4& color, int hideF
   if(!(hideFlags & HideFlags::Bottom))
   {
     normal = D3DXVECTOR3(0, -1.0f, 0);
-    v0 = mesh->AddVertex(p3, color, normal);
-    v1 = mesh->AddVertex(p2, color, normal);
-    v2 = mesh->AddVertex(p6, color, normal);
-    v3 = mesh->AddVertex(p7, color, normal);
+    v0 = mesh->AddVertex(p3, blockMat, normal);
+    v1 = mesh->AddVertex(p2, blockMat, normal);
+    v2 = mesh->AddVertex(p6, blockMat, normal);
+    v3 = mesh->AddVertex(p7, blockMat, normal);
   
     mesh->CreateTriangle(v0, v1, v2);
     mesh->CreateTriangle(v2, v3, v0);
@@ -220,10 +230,10 @@ void Chunk::CreateBlock(float x, float y, float z, D3DXVECTOR4& color, int hideF
   if(!(hideFlags & HideFlags::Left))
   {
     normal = D3DXVECTOR3(-1.0f, 0, 0);
-    v0 = mesh->AddVertex(p4, color, normal);
-    v1 = mesh->AddVertex(p0, color, normal);
-    v2 = mesh->AddVertex(p3, color, normal);
-    v3 = mesh->AddVertex(p7, color, normal);
+    v0 = mesh->AddVertex(p4, blockMat, normal);
+    v1 = mesh->AddVertex(p0, blockMat, normal);
+    v2 = mesh->AddVertex(p3, blockMat, normal);
+    v3 = mesh->AddVertex(p7, blockMat, normal);
 
     mesh->CreateTriangle(v0, v1, v2);
     mesh->CreateTriangle(v2, v3, v0);
@@ -233,10 +243,10 @@ void Chunk::CreateBlock(float x, float y, float z, D3DXVECTOR4& color, int hideF
   if(!(hideFlags & HideFlags::Right))
   {
     normal = D3DXVECTOR3(1.0f, 0, 0);
-    v0 = mesh->AddVertex(p1, color, normal);
-    v1 = mesh->AddVertex(p5, color, normal);
-    v2 = mesh->AddVertex(p6, color, normal);
-    v3 = mesh->AddVertex(p2, color, normal);
+    v0 = mesh->AddVertex(p1, blockMat, normal);
+    v1 = mesh->AddVertex(p5, blockMat, normal);
+    v2 = mesh->AddVertex(p6, blockMat, normal);
+    v3 = mesh->AddVertex(p2, blockMat, normal);
   
     mesh->CreateTriangle(v0, v1, v2);
     mesh->CreateTriangle(v2, v3, v0);
@@ -255,24 +265,32 @@ bool Chunk::Draw()
   return true;
 }
 
-D3DXVECTOR4 Chunk::GetBlockColor(const Block& block)
+const Material& Chunk::GetBlockMaterial(const Block& block)
 {
-  static const D3DXVECTOR4 grassColor = D3DXVECTOR4(0.05f, 0.45f, 0.05f, 1.0f);
-  static const D3DXVECTOR4 dirtColor = D3DXVECTOR4(0.15f, 0.10f, 0.10f, 1.0f);
-  static const D3DXVECTOR4 rockColor = D3DXVECTOR4(0.35f, 0.35f, 0.4f, 1.0f);
+  static const Material grassMat = { 
+    D3DXCOLOR(0.25f, 0.55f, 0.25f, 1.0f), D3DXCOLOR(0.25f, 0.25f, 0.25f, 5.0f)
+  };
+
+  static const Material dirtMat = { 
+    D3DXCOLOR(0.20f, 0.12f, 0.12f, 1.0f), D3DXCOLOR(0.15f, 0.10f, 0.05f, 1.0f)
+  };
+
+  static const Material rockMat = { 
+    D3DXCOLOR(0.25f, 0.25f, 0.25f, 1.0f), D3DXCOLOR(0.45f, 0.45f, 0.45f, 35.0f)
+  };
 
   switch(block.BlockType)
   {
   case BlockTypes::Grass:
-    return grassColor;
+    return grassMat;
   case BlockTypes::Dirt:
-    return dirtColor;
+    return dirtMat;
   case BlockTypes::Rock:
-    return rockColor;
+    return rockMat;
   default:
     assert(false);
   }
-  return D3DXVECTOR4(1, 1, 1, 1);
+  return rockMat;
 }
 
 Chunk::~Chunk()

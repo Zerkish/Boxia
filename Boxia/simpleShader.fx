@@ -6,25 +6,40 @@ cbuffer perObject
   float4x4 view;
 };
 
+cbuffer perFrame
+{
+  float3 cameraPosition;
+};
+
 struct VS_INPUT
 {
   float3 iPos : POSITION0;
-  float4 iCol : COLOR0;
   float3 iNorm : NORMAL0;
+  float4 matDiffuse : COLOR0;
+  float4 matSpecular : COLOR1;
+  
 };
 
 struct PS_INPUT
 {
   float4 oPos : SV_POSITION;
-  float4 oCol : COLOR0;
-  float3 oNorm : NORMAL0;
+  float4 matDiffuse : COLOR0;
+  float4 matSpecular : COLOR1;
+  float4 oNorm : NORMAL0;
+  float4 worldPos : POSITION2;
 };
 
-float4 ambientColor = float4(0.45f, 0.45f, 0.45f, 1.0f);
+float4 ambientColor = float4(0.25f, 0.25f, 0.25f, 1.0f);
 
-float3 diffuseDir = normalize(float3(0.15, -0.25f, 0.75));
-float4 diffuseColor = float4(0.20f, 0.25f, 0.20f, 1.0f);
-float diffuseIntensity = 0.1f;
+float4 diffuseDir = normalize(float4(-0.0, 1.0f, 0.0f, 0.0f));
+float4 diffuseColor = float4(0.10f, 0.12f, 0.10f, 1.0f);
+
+// Point Light test
+float4 pointLightPos = float4(0, 1, 0, 0);
+float4 pointColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
+float a0 = 0.55;
+float a1 = 0.025;
+float a2 = 0.01f;
 
 
 PS_INPUT VS(VS_INPUT input)
@@ -33,22 +48,44 @@ PS_INPUT VS(VS_INPUT input)
   output.oPos = mul(float4(input.iPos, 1.0f), world);
   output.oPos = mul(output.oPos, view);
   output.oPos = mul(output.oPos, projection);
-  output.oNorm = normalize(mul(float4(input.iNorm, 0.0f), world).xyz);
-  
+  output.oNorm = normalize(mul(float4(input.iNorm, 0.0f), world));
+  output.worldPos = mul(float4(input.iPos, 1.0f), world);
 
-  output.oCol = input.iCol;
+  output.matDiffuse = input.matDiffuse;
+  output.matSpecular = input.matSpecular;
   return output;
-
-  //if(oPos.y > 0) oCol = float4(0, 1, 0, 1);
 }
 
 float4 PS(PS_INPUT input) : SV_TARGET
-{  
-  float4 aColor = input.oCol;
-  aColor = input.oCol * ambientColor;
- 
-  aColor += saturate(diffuseColor * max(saturate(dot(-diffuseDir, input.oNorm)), -1));
-  return aColor;
+{
+  float dInten = dot(diffuseDir, input.oNorm);
+  float sInten = 0;
+  if(dInten > 0)
+  {
+    sInten = pow(max(dot(normalize(float4(cameraPosition, 0) - input.worldPos), reflect(-diffuseDir, input.oNorm)), 0), input.matSpecular.a);
+  }
+
+  float4 retCol = ambientColor * input.matDiffuse +
+                  dInten * diffuseColor * input.matDiffuse +
+                  sInten * diffuseColor * input.matSpecular;
+  
+  float dist = distance(pointLightPos, input.worldPos);
+  float4 pL = normalize((pointLightPos - input.worldPos) / dist);
+  float pDInten = max(dot(pL, input.oNorm), 0);
+  float pSInten = 0;
+
+  if(pDInten > 0)
+  {
+    pSInten = pow(max(dot(normalize(float4(cameraPosition, 0) - input.worldPos), reflect(-pL, input.oNorm)), 0), input.matSpecular.a);
+  }
+  
+  float4 pCol = (
+    pointColor * input.matDiffuse + 
+    pDInten * pointColor * input.matDiffuse + 
+    pSInten * pointColor * input.matSpecular) / 
+    (a0 + a1 * dist + a2 * dist *dist);
+
+  return saturate(pCol + retCol);
 }
 
 
