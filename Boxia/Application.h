@@ -4,11 +4,14 @@
 #include <d3d10.h>
 #include <D3DX10.h>
 #include <vector>
+
+class StateManager;
 class ZCamera;
 class ZGraphics;
+class Chunk;
 
 using std::vector;
-class Chunk;
+
 
 class Application : public ZD3DApp
 {
@@ -38,6 +41,7 @@ private:
   vector<Chunk*> chunks;
   ZGraphics* graphics;
   D3DXVECTOR4 lightPos;
+  StateManager* stateManager;
 };
 
 #endif

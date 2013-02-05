@@ -1,20 +1,28 @@
 #ifndef GAMEMANAGER_H
 #define GAMEMANAGER_H
 
-struct ID3D10Device;
+class ZGraphics;
+class WorldManager;
+class GameState;
 
 class GameManager
 {
 public:
   // Constructor
-  GameManager();
+  GameManager(GameState* gameState);
+  void Initialize();
 
-  void Update();
+  void PauseGame();
+  void StartGame();
+  void ResumeGame();
+  
+  void Update(double delta);
 
   void Draw();
 
 private:
-  ID3D10Device* device;
+  GameState* gameState;
+  ZGraphics* graphics;
 };
 
 #endif

@@ -11,18 +11,15 @@ const int gkChunkSize = 16;
 class Chunk
 {
 public:
+  friend class ChunkManager;
+
   // Ctor
   Chunk(ZGraphics* graphics);
   bool Init();
 
-  inline const D3DXVECTOR3& WorldPosition() const { return worldPos; }
-  inline void SetWorldPosition(float x, float y, float z)
-  {
-    worldPos.x = x;
-    worldPos.y = y;
-    worldPos.z = z;
-    if(mesh) mesh->SetPosition(x, y, z);
-  }
+  const D3DXVECTOR3& WorldPosition() const;
+  void SetWorldPosition(float x, float y, float z);
+
   bool Update(double delta);
   bool Draw();
 
@@ -51,5 +48,15 @@ private:
   ZGraphics* graphics;
   ZMesh* mesh;
 };
+
+// INLINES
+inline const D3DXVECTOR3& Chunk::WorldPosition() const { return worldPos; }
+inline void Chunk::SetWorldPosition(float x, float y, float z)
+{
+  worldPos.x = x;
+  worldPos.y = y;
+  worldPos.z = z;
+  if(mesh) mesh->SetPosition(x, y, z);
+}
 
 #endif

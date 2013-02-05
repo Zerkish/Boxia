@@ -76,7 +76,10 @@
     <ClCompile Include="Chunk.cpp" />
     <ClCompile Include="ChunkManager.cpp" />
     <ClCompile Include="GameManager.cpp" />
+    <ClCompile Include="GameState.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MenuState.cpp" />
+    <ClCompile Include="StateManager.cpp" />
     <ClCompile Include="WorldManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -86,12 +89,17 @@
     <ClInclude Include="ChunkManager.h" />
     <ClInclude Include="DebugCamera.h" />
     <ClInclude Include="GameManager.h" />
+    <ClInclude Include="ApplicationState.h" />
+    <ClInclude Include="GameState.h" />
+    <ClInclude Include="MenuState.h" />
+    <ClInclude Include="StateManager.h" />
     <ClInclude Include="TerrainGenerator.h" />
     <ClInclude Include="WorldManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="simpleShader.fx">
       <FileType>Document</FileType>
+      <DeploymentContent>true</DeploymentContent>
     </Text>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

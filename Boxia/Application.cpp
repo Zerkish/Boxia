@@ -2,6 +2,7 @@
 #include <LibZerkish.h>
 #include <D3DX10.h>
 #include "Chunk.h"
+#include "StateManager.h"
 
 float camXZRot;
 float camYRot;
@@ -73,8 +74,10 @@ bool Application::Initialize()
   normalDesc.AntialiasedLineEnable = true;
   normalDesc.CullMode = D3D10_CULL_BACK;
   normalDesc.DepthClipEnable = true;
-  normalDesc.DepthBias = 1;
+  normalDesc.DepthBias = 0;
   normalDesc.FillMode = D3D10_FILL_SOLID;
+  normalDesc.MultisampleEnable = true;
+
   graphicsDevice->CreateRasterizerState(&normalDesc, &rs);
 
   for(int i = 0; i < 64; ++i)
@@ -86,6 +89,9 @@ bool Application::Initialize()
       0,
       ((i / 8) - 4) * 16);
   }
+
+  stateManager = new StateManager(this);
+  stateManager->Initialize();
 
   return true;
 }
@@ -168,17 +174,13 @@ void Application::Update(double delta)
   D3DXMATRIX xzRot;
   D3DXMATRIX yRot;
 
-
-
   D3DXMatrixRotationY(&xzRot, camXZRot);
-  
   
   D3DXVECTOR3 xAxis(1, 0, 0);
   D3DXVECTOR4 res;
   D3DXVec3Transform(&res, &xAxis, &xzRot);
   xAxis = D3DXVECTOR3(res.x, res.y, res.z);
   D3DXMatrixRotationAxis(&yRot, &xAxis, camYRot);
-
 
   D3DXMATRIX comb = xzRot * yRot;
 
@@ -188,14 +190,15 @@ void Application::Update(double delta)
 
   camPos = D3DXVECTOR3(camRes.x, camRes.y, camRes.z);
   
-
   camera->SetPosition(camPos);
-  
+  stateManager->Update(delta);
 }
 
 
 void Application::Draw()
 {
+
+
   graphicsDevice->ClearRenderTargetView(renderTargetView, D3DXCOLOR(0.30f, 0.35f, 0.80f, 1));
   graphicsDevice->ClearDepthStencilView(depthStencilView, D3D10_CLEAR_DEPTH|D3D10_CLEAR_STENCIL, 1.0f, 0);
   
@@ -213,14 +216,19 @@ void Application::Draw()
 
   ID3D10EffectVectorVariable* camPos = effect->GetVariableByName("cameraPosition")->AsVector();
 
-  //D3DXVECTOR3 invDiff = -camera->Position();
-  //D3DXVec3Normalize(&invDiff, &invDiff);
-  //lightDir->SetFloatVector((float*)&invDiff);
 
   camPos->SetFloatVector((float*)&camera->Position());
 
   camPos = effect->GetVariableByName("pointLightPos")->AsVector();
   camPos->SetFloatVector((float*)&lightPos);
+
+  stateManager->Draw();
+  
+  DisplayFps();
+
+  swapChain->Present(0, 0);
+
+  return;
 
   for(Chunk* chunk : chunks)
   {
@@ -230,11 +238,6 @@ void Application::Draw()
   DisplayFps();
 
   swapChain->Present(0, 0);
-}
-
-void Application::CreateTestBoxes()
-{
-
 }
 
 
