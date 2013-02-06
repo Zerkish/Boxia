@@ -93,6 +93,11 @@ void GameState::ResumeGame()
 
 void GameState::Update(double delta)
 {
+  if(ZKeyboard::IsKeyDown(Keys::Esc))
+  {
+    SetNextState(Menu);
+  }
+
   if(gamePaused || !gameRunning)
     return;
 
