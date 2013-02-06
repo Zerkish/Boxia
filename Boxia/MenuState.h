@@ -5,7 +5,7 @@
 #include <vector>
 #include "MenuItem.h"
 
-class ID3DX10Font;
+struct ID3DX10Font;
 class ZGraphics;
 
 typedef unsigned char ubyte;
