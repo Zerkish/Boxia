@@ -222,13 +222,13 @@ void Application::Draw()
   camPos = effect->GetVariableByName("pointLightPos")->AsVector();
   camPos->SetFloatVector((float*)&lightPos);
 
-  stateManager->Draw();
+ //stateManager->Draw();
   
-  DisplayFps();
+  //DisplayFps();
 
-  swapChain->Present(0, 0);
+  //swapChain->Present(0, 0);
 
-  return;
+  //return;
 
   for(Chunk* chunk : chunks)
   {
