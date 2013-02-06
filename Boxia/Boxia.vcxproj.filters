@@ -27,6 +27,9 @@
     <Filter Include="States">
       <UniqueIdentifier>{c9bcc994-584a-480f-9497-89df93239aad}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Menu">
+      <UniqueIdentifier>{cf737ac9-b6a5-40fb-8e0d-72b250b95ec6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -58,6 +61,9 @@
     </ClCompile>
     <ClCompile Include="MenuState.cpp">
       <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuItem.cpp">
+      <Filter>Menu</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -96,6 +102,9 @@
     </ClInclude>
     <ClInclude Include="StateManager.h">
       <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuItem.h">
+      <Filter>Menu</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

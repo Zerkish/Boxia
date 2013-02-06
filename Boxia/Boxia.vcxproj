@@ -78,6 +78,7 @@
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MenuItem.cpp" />
     <ClCompile Include="MenuState.cpp" />
     <ClCompile Include="StateManager.cpp" />
     <ClCompile Include="WorldManager.cpp" />
@@ -91,6 +92,7 @@
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="ApplicationState.h" />
     <ClInclude Include="GameState.h" />
+    <ClInclude Include="MenuItem.h" />
     <ClInclude Include="MenuState.h" />
     <ClInclude Include="StateManager.h" />
     <ClInclude Include="TerrainGenerator.h" />
