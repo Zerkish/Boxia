@@ -6,7 +6,7 @@
 
 struct Block;
 
-const int gkChunkSize = 16;
+const int gkChunkSize = 1;
 
 class Chunk
 {

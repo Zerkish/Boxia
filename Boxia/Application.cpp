@@ -62,28 +62,44 @@ bool Application::Initialize()
   ////graphics = new ZGraphics(graphicsDevice, effect);
   //graphics = new ZGraphics();
   //graphics->InitializeDefault(Handle());
-//  basicTechnique = effect->GetTechniqueByName("Renderer");
+  //basicTechnique = effect->GetTechniqueByName("Renderer");
 
   //basicTechnique->GetDesc(&basicTechDesc);
 
   //D3DXMatrixPerspectiveFovLH(&projection, 3.14159f / 3.0f, 1280.0f / 780.0f, 0.01f, 1000.0f);
   //effect->GetVariableByName("projection")->AsMatrix()->SetMatrix(projection);
 
-  MeasureFps(true);
+  //MeasureFps(true);
 
-  D3D10_RASTERIZER_DESC normalDesc;
-  ZeroMemory(&normalDesc, sizeof(D3D10_RASTERIZER_DESC));
-  normalDesc.AntialiasedLineEnable = true;
-  normalDesc.CullMode = D3D10_CULL_BACK;
-  normalDesc.DepthClipEnable = true;
-  normalDesc.DepthBias = 0;
-  normalDesc.FillMode = D3D10_FILL_SOLID;
-  normalDesc.MultisampleEnable = true;
+  //D3D10_RASTERIZER_DESC normalDesc;
+  //ZeroMemory(&normalDesc, sizeof(D3D10_RASTERIZER_DESC));
+  //normalDesc.AntialiasedLineEnable = true;
+  //normalDesc.CullMode = D3D10_CULL_BACK;
+  //normalDesc.DepthClipEnable = true;
+  //normalDesc.DepthBias = 0;
+  //normalDesc.FillMode = D3D10_FILL_SOLID;
+  //normalDesc.MultisampleEnable = true;
 
-  graphicsDevice->CreateRasterizerState(&normalDesc, &rs);
+  //graphicsDevice->CreateRasterizerState(&normalDesc, &rs);
 
   stateManager = new StateManager(this);
   stateManager->Initialize();
+
+  //graphics = new ZGraphics();
+  //graphics->device = graphicsDevice;
+  ////graphics->InitializeDefault(Handle());
+  //graphics->SetEffect(effect);
+
+  //for(int i = 0; i < 64; ++i)
+  //{
+  //  chunks.push_back(new Chunk());
+  //  chunks[i]->Init();
+  //  chunks[i]->SetWorldPosition(
+  //    static_cast<float>(((i % 8) - 4) * 16),
+  //    0.0f,
+  //    static_cast<float>(((i / 8) - 4) * 16)
+  //  );
+  //}
 
   return true;
 }
@@ -183,7 +199,7 @@ void Application::Update(double delta)
 
   camPos = D3DXVECTOR3(camRes.x, camRes.y, camRes.z);
   
-  //camera->SetPosition(camPos);
+//  camera->SetPosition(camPos);
   stateManager->Update(delta);
 }
 
@@ -225,7 +241,7 @@ void Application::Draw()
 
   //for(Chunk* chunk : chunks)
   //{
-  //  chunk->Draw();
+  //  chunk->Draw(graphics);
   //}
 
   //DisplayFps();

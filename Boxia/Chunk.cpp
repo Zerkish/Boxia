@@ -39,7 +39,7 @@ bool Chunk::Init()
   {
     for(int z = 0; z < gkChunkSize; ++z)
     {
-      map[x][z] = (rand() % 25) * (float)((rand() % 100) / 100.0f);
+      map[x][z] = (rand() % 2) * (float)((rand() % 100) / 100.0f);
     }
   }
 
@@ -67,6 +67,16 @@ bool Chunk::Init()
         {
           blocks[x][z][y].SetVisible(false);
         }
+
+        if(x == 0 || x == gkChunkSize - 1 || z == 0 || z == gkChunkSize - 1)
+          blocks[x][z][y].BlockType = BlockTypes::Dirt;
+        else
+          blocks[x][z][y].BlockType = BlockTypes::Rock;
+
+       /* if(y > map[x][z])
+        {
+          blocks[x][z][y].SetVisible(false);
+        }
         if(y >= 0 && y < 1)
         {
           blocks[x][z][y].BlockType = BlockTypes::Rock;
@@ -78,12 +88,12 @@ bool Chunk::Init()
         else
         {
           blocks[x][z][y].BlockType = BlockTypes::Grass;
-        }
+        }*/
       }
     }
   }
 
-  CreateAndFillBuffers();
+  //CreateAndFillBuffers();
 
   return true;
 }
@@ -178,6 +188,7 @@ void Chunk::CreateAndFillBuffers()
 
 void Chunk::CreateBlock(float x, float y, float z, const Material& blockMat, int hideFlags)
 {
+  //float gkBlockSize = 1.0f;
   D3DXVECTOR3 p0(x - gkBlockSize / 2, y + gkBlockSize / 2, z - gkBlockSize / 2);
   D3DXVECTOR3 p1(x + gkBlockSize / 2, y + gkBlockSize / 2, z - gkBlockSize / 2);
   D3DXVECTOR3 p2(x + gkBlockSize / 2, y - gkBlockSize / 2, z - gkBlockSize / 2);

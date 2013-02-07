@@ -26,8 +26,8 @@ void GameState::Initialize()
   LoadDefaultEffect();
   graphics->SetEffect(effect);
 
-  gameManager = new GameManager(this);
-  gameManager->Initialize();
+  //gameManager = new GameManager(this);
+  //gameManager->Initialize();
 
   // Creates the input layout used to render chunks and blocks.
   CreateWorldInputLayout();
@@ -38,11 +38,11 @@ void GameState::Initialize()
 
   camera = new ZCamera(D3DXVECTOR3(0, 0, -50), D3DXVECTOR3(0, 0, 0), D3DXVECTOR3(0, 1, 0));
   camera->UpdateViewMatrix();
-  camDist = -50;
+  camDist = 50;
   camXZRot = 0;
   camYRot = 0;
 
-  D3DXMatrixPerspectiveFovLH(&projection, PI * 0.30f, 1280 / 780.0f, 0.01f, 1000.0f); 
+  D3DXMatrixPerspectiveFovLH(&projection, 3.14159f / 3.0f, 1280.0f / 780.0f, 0.01f, 1000.0f); 
   effect->GetVariableByName("projection")->AsMatrix()->SetMatrix(projection);
 }
 
@@ -123,19 +123,19 @@ void GameState::StartGame()
   gamePaused = false;
   gameRunning = true;
 
-  gameManager->StartGame();
+  //gameManager->StartGame();
 }
 
 void GameState::PauseGame()
 {
   gamePaused = true;
-  gameManager->PauseGame();
+  //gameManager->PauseGame();
 }
 
 void GameState::ResumeGame()
 {
   gamePaused = false;
-  gameManager->ResumeGame();
+  //gameManager->ResumeGame();
 }
 
 void GameState::Update(double delta)
@@ -148,7 +148,7 @@ void GameState::Update(double delta)
   if(gamePaused || !gameRunning)
     return;
 
-  gameManager->Update(delta);
+  //gameManager->Update(delta);
   worldManager->UpdateWorld(delta);
 
   MoveTestCam(delta);
@@ -162,11 +162,21 @@ void GameState::Draw()
   float blendFac[] = { 1.0f, 1.0f, 1.0f, 1.0f};
   graphics->GetDevice()->OMSetBlendState(0, blendFac, 0xffffffff);
 
+  D3DXMATRIX mat;
+  D3DXMatrixIdentity(&mat);
+  effect->GetVariableByName("world")->AsMatrix()->SetMatrix((float*)&mat);
+
+  graphics->SetInputLayout(worldInputLayout);
   graphics->SetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
   effect->GetVariableByName("view")->AsMatrix()->SetMatrix((float*)&camera->ViewMatrix());
 
+  ID3D10EffectVectorVariable* camPos = effect->GetVariableByName("cameraPosition")->AsVector();
+
+
+  camPos->SetFloatVector((float*)&camera->Position());
+
   worldManager->DrawWorld();
-  gameManager->Draw();
+  //gameManager->Draw();
 
   //GetApplication()->DisplayFps();
   graphics->Present(false);
@@ -236,4 +246,5 @@ void GameState::MoveTestCam(double delta)
   camPos = D3DXVECTOR3(camRes.x, camRes.y, camRes.z);
   
   camera->SetPosition(camPos);
+  camera->UpdateViewMatrix();
 }

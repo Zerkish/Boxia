@@ -30,27 +30,22 @@ void WorldManager::FillWorld()
 {
   chunks.push_back(new Chunk());
   chunks[0]->Init();
-  chunks[0]->SetWorldPosition(
-    0.0f,
-    0.0f,
-    0.0f
-  );
+  chunks[0]->SetWorldPosition(0.0f, 0, 0);
   chunks.push_back(new Chunk());
   chunks[1]->Init();
-  chunks[1]->SetWorldPosition(
-    16.0f,
-    0.0f,
-    0.0f
-  );
+  chunks[1]->SetWorldPosition(1.0f, 0, 0);
+  chunks.push_back(new Chunk());
+  chunks[2]->Init();
+  chunks[2]->SetWorldPosition(-1.0f, 0, 0);
 
   //for(int i = 0; i < 64; ++i)
   //{
   //  chunks.push_back(new Chunk());
   //  chunks[i]->Init();
   //  chunks[i]->SetWorldPosition(
-  //    static_cast<float>(((i % 8) - 4) * 16),
+  //    static_cast<float>(((i % 8) - 4) * gkChunkSize),
   //    0.0f,
-  //    static_cast<float>(((i / 8) - 4) * 16)
+  //    static_cast<float>(((i / 8) - 4) * gkChunkSize)
   //  );
   //}
 }
@@ -68,8 +63,8 @@ void WorldManager::UpdateWorld(double delta)
 
 void WorldManager::DrawWorld()
 {
+  
   graphics->SetInputLayout(blockLayout);
-
   for(Chunk* chunk : chunks)
   {
     if(chunk)
