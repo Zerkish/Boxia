@@ -4,11 +4,13 @@
 #include "ApplicationState.h"
 #include <vector>
 #include "MenuItem.h"
+#include <ZMouse.h>
 
 struct ID3DX10Font;
 class ZGraphics;
 
 typedef unsigned char ubyte;
+
 
 class MenuState : public ApplicationState
 {
@@ -23,11 +25,15 @@ public:
 protected:
 
 private:
+  void DoMenuItemAction(const MenuItem& menuItem);
+
   ID3DX10Font* itemFont;
   std::vector<MenuItem> menuItems;
   ZGraphics* graphics;
   ubyte* prevKeys;
   ubyte* newKeys;
+  ZMouseState newMState;
+  ZMouseState prevMState;
 };
 
 #endif

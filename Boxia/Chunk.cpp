@@ -4,64 +4,34 @@
 #include <VertexFormats.h>
 #include <cassert>
 
-ID3D10InputLayout* Chunk::chunkILayout = NULL;
-
-void Chunk::CreateChunkILayout(ZGraphics* g)
+// Constructor
+Chunk::Chunk()
 {
-  D3D10_INPUT_ELEMENT_DESC desc[4];
-  desc[0].AlignedByteOffset = 0;
-  desc[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
-  desc[0].InputSlot = 0;
-  desc[0].InputSlotClass = D3D10_INPUT_PER_VERTEX_DATA;
-  desc[0].InstanceDataStepRate = 0;
-  desc[0].SemanticIndex = 0;
-  desc[0].SemanticName = "POSITION";
-
-  desc[1].AlignedByteOffset = 12;
-  desc[1].Format = DXGI_FORMAT_R32G32B32_FLOAT;
-  desc[1].InputSlot = 0;
-  desc[1].InputSlotClass = D3D10_INPUT_PER_VERTEX_DATA;
-  desc[1].InstanceDataStepRate = 0;
-  desc[1].SemanticIndex = 0;
-  desc[1].SemanticName = "NORMAL";
-
-  desc[2].AlignedByteOffset = 24;
-  desc[2].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-  desc[2].InputSlot = 0;
-  desc[2].InputSlotClass = D3D10_INPUT_PER_VERTEX_DATA;
-  desc[2].InstanceDataStepRate = 0;
-  desc[2].SemanticIndex = 0;
-  desc[2].SemanticName = "COLOR";
-
-  desc[3].AlignedByteOffset = 40;
-  desc[3].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-  desc[3].InputSlot = 0;
-  desc[3].InputSlotClass = D3D10_INPUT_PER_VERTEX_DATA;
-  desc[3].InstanceDataStepRate = 0;
-  desc[3].SemanticIndex = 1;
-  desc[3].SemanticName = "COLOR";
-
-
-  Chunk::chunkILayout = g->CreateInputLayot(desc, 4);
-}
-
-Chunk::Chunk(ZGraphics* graphics)
-{
-  this->graphics = graphics;
   blocks = nullptr;
   mesh = nullptr;
-  //vBuffer = nullptr;
-  //iBuffer = nullptr;
+}
+
+// Destructor
+Chunk::~Chunk()
+{
+  delete mesh;
+  for(int x = 0; x < gkChunkSize; ++x)
+  {
+    for(int z = 0; z < gkChunkSize; ++z)
+    {
+      delete[] blocks[x][z];
+    }
+    delete[] blocks[x];
+  }
+  delete blocks;
 }
 
 
 bool Chunk::Init()
 {
-  if(Chunk::chunkILayout == NULL)
-    CreateChunkILayout(graphics);
-
+  needsRebuild = true;
   worldPos = D3DXVECTOR3(0, 0, 0);
-  mesh = new ZMesh(graphics, chunkILayout);
+  mesh = new ZMesh();
   mesh->SetPosition(0, 0, 0);
 
   float map[gkChunkSize][gkChunkSize];
@@ -69,7 +39,7 @@ bool Chunk::Init()
   {
     for(int z = 0; z < gkChunkSize; ++z)
     {
-      map[x][z] = (rand() % 5) * (float)((rand() % 100) / 100.0f);
+      map[x][z] = (rand() % 25) * (float)((rand() % 100) / 100.0f);
     }
   }
 
@@ -118,9 +88,8 @@ bool Chunk::Init()
   return true;
 }
 
-void Chunk::CreateAndFillBuffers()
+void Chunk::RebuildChunk(ZGraphics* graphics)
 {
-
   mesh->BeginMesh();
   for(int x = 0; x < gkChunkSize; ++x)
   {
@@ -157,7 +126,53 @@ void Chunk::CreateAndFillBuffers()
       }
     }
   }
-  mesh->FinishMesh();
+  mesh->FinishMesh(graphics);
+
+  // Chunk no longer needs to be rebuilt.
+  needsRebuild = false;
+
+}
+
+void Chunk::CreateAndFillBuffers()
+{
+
+  //mesh->BeginMesh();
+  //for(int x = 0; x < gkChunkSize; ++x)
+  //{
+  //  for(int z = 0; z < gkChunkSize; ++z)
+  //  {
+  //    for(int y = 0; y < gkChunkSize; ++y)
+  //    {
+  //      Material blockMat = GetBlockMaterial(blocks[x][z][y]);
+  //      
+  //      if(blocks[x][z][y].Visible() == false)
+  //      {
+  //        continue;
+  //      }
+
+  //      int aX = x - gkChunkSize / 2, aY = y - gkChunkSize / 2, aZ = z - gkChunkSize / 2;
+
+  //      D3DXVECTOR3 blockPos(worldPos.x + aX, worldPos.y + aY, worldPos.z + aZ);
+  //     
+  //      int hideFlags = 0;
+  //      if(x > 0 && blocks[x - 1][z][y].Visible())
+  //        hideFlags |= HideFlags::Left;
+  //      if(x < gkChunkSize - 1 && blocks[x + 1][z][y].Visible())
+  //        hideFlags |= HideFlags::Right;
+  //      if(z > 0 && blocks[x][z - 1][y].Visible())
+  //        hideFlags |= HideFlags::Front;
+  //      if(z < gkChunkSize - 1 && blocks[x][z + 1][y].Visible())
+  //        hideFlags |= HideFlags::Back;
+  //      if(y > 0 && blocks[x][z][y - 1].Visible())
+  //        hideFlags |= HideFlags::Bottom;
+  //      if(y < gkChunkSize - 1 && blocks[x][z][y + 1].Visible())
+  //        hideFlags |= HideFlags::Top;
+
+  //      CreateBlock(worldPos.x + aX, worldPos.y + aY, worldPos.z + aZ, blockMat, hideFlags);
+  //    }
+  //  }
+  //}
+  //mesh->FinishMesh();
 
 }
 
@@ -259,9 +274,9 @@ bool Chunk::Update(double delta)
   return true;
 }
 
-bool Chunk::Draw()
+bool Chunk::Draw(ZGraphics* graphics)
 {
-  mesh->DrawMesh();
+  mesh->DrawMesh(graphics);
   return true;
 }
 
@@ -293,16 +308,3 @@ const Material& Chunk::GetBlockMaterial(const Block& block)
   return rockMat;
 }
 
-Chunk::~Chunk()
-{
-  delete mesh;
-  for(int x = 0; x < gkChunkSize; ++x)
-  {
-    for(int z = 0; z < gkChunkSize; ++z)
-    {
-      delete[] blocks[x][z];
-    }
-    delete[] blocks[x];
-  }
-  delete blocks;
-}

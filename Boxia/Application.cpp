@@ -8,7 +8,7 @@ float camXZRot;
 float camYRot;
 
 
-#define PI 3.14159
+#define PI 3.14159f
 float camDist = 40;
 int chunkCount = 0;
 
@@ -27,45 +27,47 @@ bool Application::Initialize()
     return false;
 
   
-  camera = new ZCamera(D3DXVECTOR3(0, 0, -50), D3DXVECTOR3(0, 0, 0), D3DXVECTOR3(0, 1, 0));
-  camera->UpdateViewMatrix();
+  //camera = new ZCamera(D3DXVECTOR3(0, 0, -50), D3DXVECTOR3(0, 0, 0), D3DXVECTOR3(0, 1, 0));
+  //camera->UpdateViewMatrix();
 
-  ID3D10Blob* compErrors = NULL;
+  //ID3D10Blob* compErrors = NULL;
 
-  HRESULT hr = D3DX10CreateEffectFromFile(
-    "simpleShader.fx",
-    NULL,
-    NULL,
-    "fx_4_0",
-    D3D10_SHADER_ENABLE_STRICTNESS,
-    0,
-    graphicsDevice,
-    NULL,
-    NULL,
-    &effect,
-    &compErrors,
-    NULL
-  );
+  //HRESULT hr = D3DX10CreateEffectFromFile(
+  //  "simpleShader.fx",
+  //  NULL,
+  //  NULL,
+  //  "fx_4_0",
+  //  D3D10_SHADER_ENABLE_STRICTNESS,
+  //  0,
+  //  graphicsDevice,
+  //  NULL,
+  //  NULL,
+  //  &effect,
+  //  &compErrors,
+  //  NULL
+  //);
 
-  if(hr != S_OK)
-  {
-    MessageBox(0, "Shader error", "SH err", MB_OK);
-  }
+  //if(hr != S_OK)
+  //{
+  //  MessageBox(0, "Shader error", "SH err", MB_OK);
+  //}
 
-  if(compErrors)
-  {
-    MessageBox(NULL, (char*)compErrors->GetBufferPointer(),
-      "Shader Compilation Error", MB_OK | MB_ICONERROR);
-    compErrors->Release();
-    exit(0);
-  }
-  graphics = new ZGraphics(graphicsDevice, effect);
-  basicTechnique = effect->GetTechniqueByName("Renderer");
+  //if(compErrors)
+  //{
+  //  MessageBox(NULL, (char*)compErrors->GetBufferPointer(),
+  //    "Shader Compilation Error", MB_OK | MB_ICONERROR);
+  //  compErrors->Release();
+  //  exit(0);
+  //}
+  ////graphics = new ZGraphics(graphicsDevice, effect);
+  //graphics = new ZGraphics();
+  //graphics->InitializeDefault(Handle());
+//  basicTechnique = effect->GetTechniqueByName("Renderer");
 
-  basicTechnique->GetDesc(&basicTechDesc);
+  //basicTechnique->GetDesc(&basicTechDesc);
 
-  D3DXMatrixPerspectiveFovLH(&projection, 3.14159f / 3.0f, 1280.0f / 780.0f, 0.01f, 1000.0f);
-  effect->GetVariableByName("projection")->AsMatrix()->SetMatrix(projection);
+  //D3DXMatrixPerspectiveFovLH(&projection, 3.14159f / 3.0f, 1280.0f / 780.0f, 0.01f, 1000.0f);
+  //effect->GetVariableByName("projection")->AsMatrix()->SetMatrix(projection);
 
   MeasureFps(true);
 
@@ -80,16 +82,6 @@ bool Application::Initialize()
 
   graphicsDevice->CreateRasterizerState(&normalDesc, &rs);
 
-  for(int i = 0; i < 64; ++i)
-  {
-    chunks.push_back(new Chunk(graphics));
-    chunks[i]->Init();
-    chunks[i]->SetWorldPosition(
-      ((i % 8) - 4) * 16,
-      0,
-      ((i / 8) - 4) * 16);
-  }
-
   stateManager = new StateManager(this);
   stateManager->Initialize();
 
@@ -99,22 +91,23 @@ bool Application::Initialize()
 
 void Application::Update(double delta)
 {
+  float mtime = static_cast<float>(delta);
   if(ZKeyboard::IsKeyDown(Keys::Left))
   {
-    camXZRot -= 0.001f * delta;
+    camXZRot -= 0.001f * mtime;
   }
   else if(ZKeyboard::IsKeyDown(Keys::Right))
   {
-    camXZRot += 0.001f * delta;
+    camXZRot += 0.001f * mtime;
   }
 
   if(ZKeyboard::IsKeyDown(Keys::Up))
   {
-    camYRot += 0.001f * delta;
+    camYRot += 0.001f * mtime;
   }
   else if(ZKeyboard::IsKeyDown(Keys::Down))
   {
-    camYRot -= 0.001f * delta;
+    camYRot -= 0.001f * mtime;
   }
 
   
@@ -131,39 +124,39 @@ void Application::Update(double delta)
 
   if(ZKeyboard::IsKeyDown(Keys::W))
   {
-    camDist -= 0.1f * delta;
+    camDist -= 0.1f * mtime;
   }
   if(ZKeyboard::IsKeyDown(Keys::S))
   {
-    camDist += 0.1f * delta;
+    camDist += 0.1f * mtime;
   }
   
   if(ZKeyboard::IsKeyDown(Keys::Numpad8))
   {
-    lightPos.z += 0.01f * delta;
+    lightPos.z += 0.01f * mtime;
   }
   if(ZKeyboard::IsKeyDown(Keys::Numpad5))
   {
-    lightPos.z -= 0.01f * delta;
+    lightPos.z -= 0.01f * mtime;
   }
 
   if(ZKeyboard::IsKeyDown(Keys::Numpad4))
   {
-    lightPos.x -= 0.01f * delta;
+    lightPos.x -= 0.01f * mtime;
   }
   if(ZKeyboard::IsKeyDown(Keys::Numpad6))
   {
-    lightPos.x += 0.01f * delta;
+    lightPos.x += 0.01f * mtime;
   }
 
   if(ZKeyboard::IsKeyDown(Keys::Subtract))
   {
-    lightPos.y += 0.01f * delta;
+    lightPos.y += 0.01f * mtime;
   }
 
   if(ZKeyboard::IsKeyDown(Keys::Add))
   {
-    lightPos.y -= 0.01f * delta;
+    lightPos.y -= 0.01f * mtime;
   }
 
 
@@ -190,7 +183,7 @@ void Application::Update(double delta)
 
   camPos = D3DXVECTOR3(camRes.x, camRes.y, camRes.z);
   
-  camera->SetPosition(camPos);
+  //camera->SetPosition(camPos);
   stateManager->Update(delta);
 }
 
@@ -199,53 +192,48 @@ void Application::Draw()
 {
 
 
-  graphicsDevice->ClearRenderTargetView(renderTargetView, D3DXCOLOR(0.30f, 0.35f, 0.80f, 1));
-  graphicsDevice->ClearDepthStencilView(depthStencilView, D3D10_CLEAR_DEPTH|D3D10_CLEAR_STENCIL, 1.0f, 0);
-  
-  float blendFac[] = { 1.0f, 1.0f, 1.0f, 1.0f};
-  graphicsDevice->OMSetBlendState(0, blendFac, 0xffffffff);
+  //graphicsDevice->ClearRenderTargetView(renderTargetView, D3DXCOLOR(0.30f, 0.35f, 0.80f, 1));
+  //graphicsDevice->ClearDepthStencilView(depthStencilView, D3D10_CLEAR_DEPTH|D3D10_CLEAR_STENCIL, 1.0f, 0);
+  //
+  //float blendFac[] = { 1.0f, 1.0f, 1.0f, 1.0f};
+  //graphicsDevice->OMSetBlendState(0, blendFac, 0xffffffff);
 
-  graphicsDevice->RSSetState(rs);
-  effect->GetVariableByName("view")->AsMatrix()->SetMatrix((float*)&camera->ViewMatrix());
-  
-  // Draw Boxes
-  graphicsDevice->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-  graphicsDevice->OMSetDepthStencilState(0, 0);
+  //graphicsDevice->RSSetState(rs);
+  //effect->GetVariableByName("view")->AsMatrix()->SetMatrix((float*)&camera->ViewMatrix());
+  //
+  //// Draw Boxes
+  //graphicsDevice->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+  //graphicsDevice->OMSetDepthStencilState(0, 0);
 
-  basicTechnique->GetDesc(&basicTechDesc);
+  //basicTechnique->GetDesc(&basicTechDesc);
 
-  ID3D10EffectVectorVariable* camPos = effect->GetVariableByName("cameraPosition")->AsVector();
+  //ID3D10EffectVectorVariable* camPos = effect->GetVariableByName("cameraPosition")->AsVector();
 
 
-  camPos->SetFloatVector((float*)&camera->Position());
+  //camPos->SetFloatVector((float*)&camera->Position());
 
-  camPos = effect->GetVariableByName("pointLightPos")->AsVector();
-  camPos->SetFloatVector((float*)&lightPos);
+  //camPos = effect->GetVariableByName("pointLightPos")->AsVector();
+  //camPos->SetFloatVector((float*)&lightPos);
 
- //stateManager->Draw();
+  stateManager->Draw();
   
   //DisplayFps();
 
   //swapChain->Present(0, 0);
 
-  //return;
+  return;
 
-  for(Chunk* chunk : chunks)
-  {
-    chunk->Draw();
-  }
+  //for(Chunk* chunk : chunks)
+  //{
+  //  chunk->Draw();
+  //}
 
-  DisplayFps();
+  //DisplayFps();
 
-  swapChain->Present(0, 0);
+  //swapChain->Present(0, 0);
 }
 
 
 Application::~Application()
 {
-  if(effect)
-    effect->Release();
-
-  delete camera;
-
 }

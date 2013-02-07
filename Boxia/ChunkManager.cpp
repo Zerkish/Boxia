@@ -52,7 +52,8 @@ void ChunkManager::UnloadChunk(Chunk* chunk)
 
   // Write block data.
   writeStream.put(ChunkTags::BlockData);
-  writeStream.put(sizeof(BlockTypes) * gkChunkSize * gkChunkSize * gkChunkSize);
+  int bBlocksSize = sizeof(BlockTypes) * gkChunkSize * gkChunkSize * gkChunkSize;
+  writeStream.write((char*)&bBlocksSize, sizeof(int));
   for(int x = 0; x < gkChunkSize; ++x)
   {
     for(int z = 0; z < gkChunkSize; ++z)

@@ -25,8 +25,6 @@ void StateManager::Update(double delta)
 {
   if(!currentState) return;
 
-  currentState->Update(delta);
-
   switch(currentState->GetNextState())
   {
   case ApplicationStates::Menu:
@@ -41,7 +39,7 @@ void StateManager::Update(double delta)
       currentState = menuState;
       currentState->Activate();
     }
-    return;
+    break;
   case ApplicationStates::Game:
     if(currentState != gameState)
     {
@@ -49,18 +47,21 @@ void StateManager::Update(double delta)
       {
         gameState = new GameState(application);
         gameState->Initialize();
+        gameState->StartGame();
       }
       currentState->Deactivate();
       currentState = gameState;
       currentState->Activate();
     }
-    return;
+    break;
   case ApplicationStates::Quit:
     application->Quit();
     return;
   default:
     assert(false);
   };
+
+  currentState->Update(delta);
 }
 
 void StateManager::Draw()

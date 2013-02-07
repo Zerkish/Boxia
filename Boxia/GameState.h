@@ -1,11 +1,14 @@
 #ifndef GAMESTATE_H
 #define GAMESTATE_H
+#include <LibZerkish.h>
 #include "ApplicationState.h"
-#include <D3DX10.h>
+
+#include <d3d10.h>
+#include <dxgi.h>
+#include <d3dx10.h>
+
 
 class GameManager;
-class ZGraphics;
-class ZD3DApp;
 class WorldManager;
 class ZCamera;
 
@@ -15,7 +18,7 @@ class GameState : public ApplicationState
 {
 public:
   GameState(ZD3DApp* application);
-
+  ~GameState();
   void Initialize();
   
   void Activate();
@@ -34,7 +37,15 @@ public:
 protected:
 
 private:
+  void CreateWorldInputLayout();
   void LoadDefaultEffect();
+
+  // Test
+  void MoveTestCam(double delta);
+  ZCamera* camera;
+  float camXZRot;
+  float camYRot;
+  float camDist;
 
   bool gameRunning;
   bool gamePaused;
@@ -42,8 +53,10 @@ private:
   WorldManager* worldManager;
   ZGraphics* graphics;
   ID3D10Effect* effect;
-  ZCamera* camera;
   D3DXMATRIX projection;
+
+  // World Vars
+  ID3D10InputLayout* worldInputLayout;
 };
 
 // INLINES

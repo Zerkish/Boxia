@@ -13,21 +13,27 @@ class Chunk
 public:
   friend class ChunkManager;
 
-  // Ctor
-  Chunk(ZGraphics* graphics);
+  // Constructor
+  Chunk();
+
+  // Destructor
+   ~Chunk();
+
   bool Init();
 
+  void RebuildChunk(ZGraphics* graphics);
+
+  bool Update(double delta);
+  bool Draw(ZGraphics* graphics);
+#pragma region Accessors
   const D3DXVECTOR3& WorldPosition() const;
   void SetWorldPosition(float x, float y, float z);
 
-  bool Update(double delta);
-  bool Draw();
+  bool NeedsRebuild() const;
+#pragma endregion
 
-  ~Chunk();
 private:
-  static ID3D10InputLayout* chunkILayout;
-  static void CreateChunkILayout(ZGraphics* g);
-  
+  bool needsRebuild;
   D3DXVECTOR3 worldPos;
   void CreateAndFillBuffers();
   
@@ -45,7 +51,6 @@ private:
   };
 
   Block*** blocks;
-  ZGraphics* graphics;
   ZMesh* mesh;
 };
 
@@ -58,5 +63,7 @@ inline void Chunk::SetWorldPosition(float x, float y, float z)
   worldPos.z = z;
   if(mesh) mesh->SetPosition(x, y, z);
 }
+
+inline bool Chunk::NeedsRebuild() const { return needsRebuild; }
 
 #endif
